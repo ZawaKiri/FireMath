@@ -436,12 +436,17 @@ class _HomePageState extends State<HomePage>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                  'Score : ${game == 'Aventure' ? score : game == 'Vitesse' ? (sped - 1) * 20 + iscore : iscore}${game == 'Aventure' ? "\nScore Total : $scoreTotal" : ''}\n\n',
+                  'Score : ${game == 'Aventure' ? score : game == 'Vitesse' ? (sped - 1) * 20 + iscore : iscore}${game == 'Aventure' ? "\nScore Total : $scoreTotal" : ''}\n',
                   textAlign: TextAlign.right),
               Text(
-                  '${(sped == 3) && winner ? 'Niveau ${levels[level]} débloqué!' : ''}\n'
-                  '${game == 'Aventure' ? "Réalisez un score de 20 pour débloquer ${(sped + 1) == 3 ? 'le niveau supérieur' : 'la vitesse supérieure'}\n"
-                      "${(sped + 1) == 3 ? 'et de 30 pour débloquer un niveau bonus\n' : ''}" : game == 'Infini' ? "Jouez au mode Vitesse pour débloquer plus de vitesses\nJouez au mode Aventure pour débloquer plus de Niveaux" : "La vitesse augmente tous les 20 points"}', textAlign: TextAlign.center,),
+                  '${(sped == 3) && winner ? 'Niveau ${levels[level]} débloqué!' : ''}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                '${game == 'Aventure' ? "Réalisez un score de 20 pour débloquer ${(sped + 1) == 3 ? 'le niveau supérieur' : 'la vitesse supérieure'}\n"
+                    "${(sped + 1) == 3 ? 'et de 30 pour débloquer un niveau bonus\n' : ''}" : game == 'Infini' ? "Jouez au mode Vitesse pour débloquer plus de vitesses\nJouez au mode Aventure pour débloquer plus de Niveaux" : "La vitesse augmente tous les 20 points"}',
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
           actions: <Widget>[
@@ -467,6 +472,7 @@ class _HomePageState extends State<HomePage>
                               resetGame();
                             } else {
                               level += 1;
+                              if (level > debloque) debloque = level;
                               nextLevel(level);
                             }
                           } else {
@@ -498,10 +504,12 @@ class _HomePageState extends State<HomePage>
                       onPressed: () {
                         setState(() {
                           Navigator.pop(context, 'Menu principal');
+                          if (level > debloque) debloque = level;
                           score = 0;
                           iscore = 0;
                           scoreTotal = 0;
                           nextLevel(1);
+                          save();
                         });
                       },
                       child: const Text(
@@ -719,6 +727,7 @@ class _HomePageState extends State<HomePage>
                   gameStarted = false;
                   _timer.cancel();
                   nextLevel(1);
+                  save();
                 } else {
                   if (isPlaying) {
                     saveMenu();
@@ -819,7 +828,10 @@ class _HomePageState extends State<HomePage>
                                                   onPressed: () {
                                                     if (!gameStarted) {
                                                       setState(() {
-                                                        level = level >= debloque ? 1 : level + 1;
+                                                        level =
+                                                            level >= debloque
+                                                                ? 1
+                                                                : level + 1;
                                                         print(level);
                                                         texte[1] =
                                                             "Niveau : ${levels[level - 1]}";
