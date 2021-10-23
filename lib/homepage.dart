@@ -5,7 +5,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuxmath/bonusball.dart';
 import 'package:tuxmath/fireball.dart';
@@ -229,14 +231,15 @@ class _HomePageState extends State<HomePage>
     for (var k in modes) if (s.split(k).length == 2) v = k;
     switch (v) {
       case '+':
-        if ((n == int.parse(s.split("+")[0]) + int.parse(s.split("+")[1])) && !bonus) {
+        if ((n == int.parse(s.split("+")[0]) + int.parse(s.split("+")[1])) &&
+            !bonus) {
           setState(() {
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
             temp = [...speed];
             speed = [0.0, 0.0, 0.0, 0.0, 0.0];
             bonus = true;
-            Timer(Duration(seconds: 10), () {
+            Timer(Duration(seconds: 3), () {
               speed = [...temp];
               bonus = false;
             });
@@ -250,7 +253,7 @@ class _HomePageState extends State<HomePage>
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
             temp = [...speed];
             speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 5), () {
+            Timer(Duration(seconds: 3), () {
               speed = [...temp];
             });
           });
@@ -263,7 +266,7 @@ class _HomePageState extends State<HomePage>
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
             temp = [...speed];
             speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 5), () {
+            Timer(Duration(seconds: 3), () {
               speed = [...temp];
             });
           });
@@ -276,7 +279,7 @@ class _HomePageState extends State<HomePage>
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
             temp = [...speed];
             speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 5), () {
+            Timer(Duration(seconds: 3), () {
               speed = [...temp];
             });
           });
@@ -420,10 +423,26 @@ class _HomePageState extends State<HomePage>
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => AlertDialog(
-          title: Center(child: Text(winner ? 'Gagné!' : 'Perdu!')),
-          content: Text(
-            'Score : ${game == 'Aventure' ? score : game == 'Vitesse' ? (sped - 1) * 20 + iscore : iscore}${game == 'Aventure' ? "\nScore Total : $scoreTotal" : ''}',
-            textAlign: TextAlign.center,
+          title: ListTile(
+            title: Center(
+                child: Text(winner ? 'Gagné!' : 'Perdu!',
+                    style: TextStyle(fontWeight: FontWeight.bold))),
+            subtitle: Center(
+                child: Text('Niveau : ${levels[level - 1]}, Vitesse : $sped',
+                    style: TextStyle(fontWeight: FontWeight.bold))),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                  'Score : ${game == 'Aventure' ? score : game == 'Vitesse' ? (sped - 1) * 20 + iscore : iscore}${game == 'Aventure' ? "\nScore Total : $scoreTotal" : ''}\n\n',
+                  textAlign: TextAlign.right),
+              Text(
+                  '${(sped == 3) && winner ? 'Niveau ${levels[level]} débloqué!' : ''}\n'
+                  '${game == 'Aventure' ? "Réalisez un score de 20 pour débloquer ${(sped + 1) == 3 ? 'le niveau supérieur' : 'la vitesse supérieure'}\n"
+                      "${(sped + 1) == 3 ? 'et de 30 pour débloquer un niveau bonus\n' : ''}" : game == 'Infini' ? "Jouez au mode Vitesse pour débloquer plus de vitesses\nJouez au mode Aventure pour débloquer plus de Niveaux" : "La vitesse augmente tous les 20 points"}', textAlign: TextAlign.center,),
+            ],
           ),
           actions: <Widget>[
             Row(
@@ -434,8 +453,13 @@ class _HomePageState extends State<HomePage>
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          Navigator.pop(context,
-                              winner ? 'Niveau suivant' : 'Recommencer');
+                          Navigator.pop(
+                              context,
+                              winner
+                                  ? (sped + 1) == 3
+                                      ? 'Niveau suivant'
+                                      : 'Vitesse suivante'
+                                  : 'Recommencer');
                           score = 0;
                           if (winner) {
                             sped += 1;
@@ -443,19 +467,23 @@ class _HomePageState extends State<HomePage>
                               resetGame();
                             } else {
                               level += 1;
-                              if (level > debloque) debloque = level;
                               nextLevel(level);
                             }
                           } else {
                             iscore = 0;
-                            sped = 1;
+                            if (game == 'Vitesse') sped = 1;
                             scoreTotal = 0;
                           }
                           resetGame();
+                          startGame();
                         });
                       },
                       child: Text(
-                        winner ? 'Niveau Suivant' : 'Recommencer',
+                        winner
+                            ? sped == 3
+                                ? 'Niveau suivant'
+                                : 'Vitesse suivante'
+                            : 'Recommencer',
                         style: TextStyle(color: Color(0xFF0B0F21)),
                       ),
                       style: TextButton.styleFrom(
@@ -463,91 +491,28 @@ class _HomePageState extends State<HomePage>
                     ),
                   ),
                 ),
-                if (game == 'Aventure')
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            showDialog<String>(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                      title: Center(
-                                          child: Text("Êtes vous sûrs ?")),
-                                      content:
-                                          Text("Le score total sera perdu"),
-                                      actions: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      Navigator.pop(
-                                                          context, 'Non');
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    'Non',
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xFF0B0F21)),
-                                                  ),
-                                                  style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          Color(0xFF00A878)),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      Navigator.pop(
-                                                          context, 'Oui');
-                                                      Navigator.pop(
-                                                          context, 'Oui');
-                                                      score = 0;
-                                                      iscore = 0;
-                                                      scoreTotal = 0;
-                                                      nextLevel(1);
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    'Oui',
-                                                    style: TextStyle(
-                                                        color:
-                                                            Color(0xFF0B0F21)),
-                                                  ),
-                                                  style: TextButton.styleFrom(
-                                                      backgroundColor:
-                                                          Color(0xFFDB222A)),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ));
-                          });
-                        },
-                        child: const Text(
-                          'Menu Principal',
-                          style: TextStyle(color: Color(0xFF0A0F32)),
-                        ),
-                        style: TextButton.styleFrom(
-                            backgroundColor: Color(0xFFDB222A)),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          Navigator.pop(context, 'Menu principal');
+                          score = 0;
+                          iscore = 0;
+                          scoreTotal = 0;
+                          nextLevel(1);
+                        });
+                      },
+                      child: const Text(
+                        'Menu Principal',
+                        style: TextStyle(color: Color(0xFF0A0F32)),
                       ),
+                      style: TextButton.styleFrom(
+                          backgroundColor: Color(0xFFDB222A)),
                     ),
                   ),
+                ),
               ],
             ),
           ],
@@ -709,7 +674,7 @@ class _HomePageState extends State<HomePage>
     isPlaying = false;
   }
 
-  Future<void> save() async{
+  Future<void> save() async {
     var prefs = await SharedPreferences.getInstance();
     prefs.setInt('Niveaux', debloque);
     prefs.setString('Vitesses', json.encode(vDebloque));
@@ -723,7 +688,9 @@ class _HomePageState extends State<HomePage>
   Future<void> restore() async {
     final prefs = await SharedPreferences.getInstance();
     debloque = prefs.getInt('Niveaux') ?? 0;
-    vDebloque = json.decode(prefs.getString('Vitesses') ?? '[1, 1, 1, 1, 1, 1]').cast<int>();
+    vDebloque = json
+        .decode(prefs.getString('Vitesses') ?? '[1, 1, 1, 1, 1, 1]')
+        .cast<int>();
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Restauré!"),
@@ -852,11 +819,11 @@ class _HomePageState extends State<HomePage>
                                                   onPressed: () {
                                                     if (!gameStarted) {
                                                       setState(() {
-                                                        level = (level + 1) %
-                                                                debloque +
-                                                            1;
+                                                        level = level >= debloque ? 1 : level + 1;
+                                                        print(level);
                                                         texte[1] =
                                                             "Niveau : ${levels[level - 1]}";
+                                                        nextLevel(level);
                                                       });
                                                     }
                                                   },
@@ -896,6 +863,7 @@ class _HomePageState extends State<HomePage>
                                           child: !gameStarted
                                               ? TextButton(
                                                   onPressed: () {
+                                                    print(level);
                                                     if (!gameStarted) {
                                                       showDialog(
                                                           context: context,
@@ -967,29 +935,28 @@ class _HomePageState extends State<HomePage>
                                                                         ),
                                                                       Expanded(
                                                                         child:
-                                                                        Padding(
+                                                                            Padding(
                                                                           padding:
-                                                                          const EdgeInsets.all(8.0),
+                                                                              const EdgeInsets.all(8.0),
                                                                           child:
-                                                                          TextButton(
+                                                                              TextButton(
                                                                             onPressed:
                                                                                 () {
                                                                               setState(() {
                                                                                 Navigator.pop(context, 'Retour');
-                                                                                game = 'Infini';
+                                                                                if (game == 'Infini') sped = 1;
                                                                               });
                                                                             },
                                                                             child:
-                                                                            Text(
+                                                                                Text(
                                                                               'Retour',
                                                                               style: TextStyle(color: Color(0xFF0B0F21)),
                                                                             ),
                                                                             style:
-                                                                            TextButton.styleFrom(backgroundColor: Color(0xFFDB222A)),
+                                                                                TextButton.styleFrom(backgroundColor: Color(0xFFDB222A)),
                                                                           ),
                                                                         ),
                                                                       ),
-
                                                                     ],
                                                                   )
                                                                 ],
@@ -1483,7 +1450,7 @@ class _HomePageState extends State<HomePage>
                                           b = true;
                                           vrai = 1.0;
                                           bon += 1;
-                                          if (bon == 5) {
+                                          if (bon >= 5 && bF == 5) {
                                             bF = random.nextInt(5);
                                             bText[bF] = maths(modes[
                                                 random.nextInt(modes.length)]);
