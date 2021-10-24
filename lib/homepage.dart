@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage>
     anim =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     anim.forward();
+    restore();
   }
 
   @override
@@ -37,6 +38,10 @@ class _HomePageState extends State<HomePage>
   }
 
   late AnimationController anim;
+  var bonusWatch = new Stopwatch();
+  var bonusD = 3;
+  var malusWatch = new Stopwatch();
+  var malusD = 5;
   var help = false;
   var score = 0;
   var scoreTotal = 0;
@@ -108,8 +113,6 @@ class _HomePageState extends State<HomePage>
   var mortel = [false, false, false, false, false];
   var sped = 1;
   var closed = false;
-  var malus = false;
-  var bonus = false;
   var houseimg = 0;
   var houseimage = "assets/images/housefire.png";
   var hi = false;
@@ -134,6 +137,7 @@ class _HomePageState extends State<HomePage>
   ];
   var bText = ['', '', '', '', ''];
   var bClock = 0;
+  var bType = 0;
   var bF = 5;
   var debloque = 1;
   var vDebloque = [1, 1, 1, 1, 1, 1];
@@ -219,8 +223,10 @@ class _HomePageState extends State<HomePage>
       bon = 0;
       b = false;
       mortel = [false, false, false, false, false];
-      malus = false;
-      bonus = false;
+      malusWatch.stop();
+      malusWatch.reset();
+      bonusWatch.stop();
+      bonusWatch.reset();
       hi = false;
     });
   }
@@ -232,56 +238,189 @@ class _HomePageState extends State<HomePage>
     switch (v) {
       case '+':
         if ((n == int.parse(s.split("+")[0]) + int.parse(s.split("+")[1])) &&
-            !bonus) {
+            !bonusWatch.isRunning) {
           setState(() {
+            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            temp = [...speed];
-            speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            bonus = true;
-            Timer(Duration(seconds: 3), () {
-              speed = [...temp];
-              bonus = false;
-            });
+            if (bType == 0) {
+              temp = [...speed];
+              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              bonusWatch.start();
+              Timer(Duration(seconds: bonusD), () {
+                speed = [...temp];
+                bonusWatch.stop();
+                bonusWatch.reset();
+                bon = 0;
+              });
+            } else if (bType == 1) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  position[f] = -(MediaQuery.of(context).size.width / 7) *
+                          (1 + 704 / 526) -
+                      random.nextInt(((MediaQuery.of(context).size.width / 7) *
+                              (1 + 704 / 526))
+                          .toInt());
+                  game == 'Aventure' ? score++ : iscore++;
+                  speed[f] = (random.nextInt(3) + sped) / 2;
+                  texte[f] = maths(modes[random.nextInt(modes.length)]);
+                  mortel[f] = f == 2
+                      ? false
+                      : qT[f] == 2
+                          ? true
+                          : random.nextInt(5) == 0
+                              ? true
+                              : false;
+                });
+              }
+            } else if (bType == 2) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  if (qT[f] > 0) qT[f] -= 1;
+                });
+              }
+            }
           });
         }
         break;
       case '-':
-        if (n == int.parse(s.split("-")[0]) - int.parse(s.split("-")[1])) {
+        if ((n == int.parse(s.split("-")[0]) + int.parse(s.split("-")[1])) &&
+            !bonusWatch.isRunning) {
           setState(() {
+            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            temp = [...speed];
-            speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 3), () {
-              speed = [...temp];
-            });
+            if (bType == 0) {
+              temp = [...speed];
+              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              bonusWatch.start();
+              Timer(Duration(seconds: bonusD), () {
+                speed = [...temp];
+                bonusWatch.stop();
+                bonusWatch.reset();
+                bon = 0;
+              });
+            } else if (bType == 1) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  position[f] = -(MediaQuery.of(context).size.width / 7) *
+                          (1 + 704 / 526) -
+                      random.nextInt(((MediaQuery.of(context).size.width / 7) *
+                              (1 + 704 / 526))
+                          .toInt());
+                  game == 'Aventure' ? score++ : iscore++;
+                  speed[f] = (random.nextInt(3) + sped) / 2;
+                  texte[f] = maths(modes[random.nextInt(modes.length)]);
+                  mortel[f] = f == 2
+                      ? false
+                      : qT[f] == 2
+                          ? true
+                          : random.nextInt(5) == 0
+                              ? true
+                              : false;
+                });
+              }
+            } else if (bType == 2) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  if (qT[f] > 0) qT[f] -= 1;
+                });
+              }
+            }
           });
         }
         break;
       case '*':
-        if (n == int.parse(s.split("*")[0]) * int.parse(s.split("*")[1])) {
+        if ((n == int.parse(s.split("*")[0]) + int.parse(s.split("*")[1])) &&
+            !bonusWatch.isRunning) {
           setState(() {
+            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            temp = [...speed];
-            speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 3), () {
-              speed = [...temp];
-            });
+            if (bType == 0) {
+              temp = [...speed];
+              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              bonusWatch.start();
+              Timer(Duration(seconds: bonusD), () {
+                speed = [...temp];
+                bonusWatch.stop();
+                bonusWatch.reset();
+                bon = 0;
+              });
+            } else if (bType == 1) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  position[f] = -(MediaQuery.of(context).size.width / 7) *
+                          (1 + 704 / 526) -
+                      random.nextInt(((MediaQuery.of(context).size.width / 7) *
+                              (1 + 704 / 526))
+                          .toInt());
+                  game == 'Aventure' ? score++ : iscore++;
+                  speed[f] = (random.nextInt(3) + sped) / 2;
+                  texte[f] = maths(modes[random.nextInt(modes.length)]);
+                  mortel[f] = f == 2
+                      ? false
+                      : qT[f] == 2
+                          ? true
+                          : random.nextInt(5) == 0
+                              ? true
+                              : false;
+                });
+              }
+            } else if (bType == 2) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  if (qT[f] > 0) qT[f] -= 1;
+                });
+              }
+            }
           });
         }
         break;
       case '/':
-        if (n == int.parse(s.split("/")[0]) ~/ int.parse(s.split("/")[1])) {
+        if ((n == int.parse(s.split("/")[0]) + int.parse(s.split("/")[1])) &&
+            !bonusWatch.isRunning) {
           setState(() {
+            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            temp = [...speed];
-            speed = [0.0, 0.0, 0.0, 0.0, 0.0];
-            Timer(Duration(seconds: 3), () {
-              speed = [...temp];
-            });
+            if (bType == 0) {
+              temp = [...speed];
+              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              bonusWatch.start();
+              Timer(Duration(seconds: bonusD), () {
+                speed = [...temp];
+                bonusWatch.stop();
+                bonusWatch.reset();
+                bon = 0;
+              });
+            } else if (bType == 1) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  position[f] = -(MediaQuery.of(context).size.width / 7) *
+                          (1 + 704 / 526) -
+                      random.nextInt(((MediaQuery.of(context).size.width / 7) *
+                              (1 + 704 / 526))
+                          .toInt());
+                  game == 'Aventure' ? score++ : iscore++;
+                  speed[f] = (random.nextInt(3) + sped) / 2;
+                  texte[f] = maths(modes[random.nextInt(modes.length)]);
+                  mortel[f] = f == 2
+                      ? false
+                      : qT[f] == 2
+                          ? true
+                          : random.nextInt(5) == 0
+                              ? true
+                              : false;
+                });
+              }
+            } else if (bType == 2) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+                  if (qT[f] > 0) qT[f] -= 1;
+                });
+              }
+            }
           });
         }
         break;
@@ -438,13 +577,16 @@ class _HomePageState extends State<HomePage>
               Text(
                   'Score : ${game == 'Aventure' ? score : game == 'Vitesse' ? (sped - 1) * 20 + iscore : iscore}${game == 'Aventure' ? "\nScore Total : $scoreTotal" : ''}\n',
                   textAlign: TextAlign.right),
+              Center(
+                heightFactor: 1,
+                child: Text(
+                    '${(sped == 3) && winner ? 'Niveau ${levels[level]} débloqué!' : ''}',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
               Text(
-                  '${(sped == 3) && winner ? 'Niveau ${levels[level]} débloqué!' : ''}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                '${game == 'Aventure' ? "Réalisez un score de 20 pour débloquer ${(sped + 1) == 3 ? 'le niveau supérieur' : 'la vitesse supérieure'}\n"
-                    "${(sped + 1) == 3 ? 'et de 30 pour débloquer un niveau bonus\n' : ''}" : game == 'Infini' ? "Jouez au mode Vitesse pour débloquer plus de vitesses\nJouez au mode Aventure pour débloquer plus de Niveaux" : "La vitesse augmente tous les 20 points"}',
+                '${game == 'Aventure' ? "Réalisez un score de 20 pour débloquer ${(winner ? (sped + 1) : sped) == 3 ? 'le niveau supérieur' : 'la vitesse supérieure'}\n"
+                    "${(winner ? (sped + 1) : sped) == 3 ? 'et de 30 pour débloquer un niveau bonus\n' : ''}" : game == 'Infini' ? "Jouez au mode Vitesse pour débloquer plus de vitesses\nJouez au mode Aventure pour débloquer plus de Niveaux" : "La vitesse augmente tous les 20 points"}',
                 textAlign: TextAlign.center,
               ),
             ],
@@ -468,9 +610,7 @@ class _HomePageState extends State<HomePage>
                           score = 0;
                           if (winner) {
                             sped += 1;
-                            if (sped <= 3) {
-                              resetGame();
-                            } else {
+                            if (sped > 3) {
                               level += 1;
                               if (level > debloque) debloque = level;
                               nextLevel(level);
@@ -504,7 +644,14 @@ class _HomePageState extends State<HomePage>
                       onPressed: () {
                         setState(() {
                           Navigator.pop(context, 'Menu principal');
-                          if (level > debloque) debloque = level;
+                          if (winner) {
+                            sped += 1;
+                            if (sped > 3) {
+                              level += 1;
+                              if (level > debloque) debloque = level;
+                              nextLevel(level);
+                            }
+                          }
                           score = 0;
                           iscore = 0;
                           scoreTotal = 0;
@@ -551,6 +698,10 @@ class _HomePageState extends State<HomePage>
         modes = ['+', '-', '*', '/'];
         highs = {'+': 500, '-': 200, '*': 15, '/': 10};
         break;
+      case 6:
+        modes = ['+', '-', '*', '/'];
+        highs = {'+': 1000, '-': 500, '*': 20, '/': 15};
+        break;
     }
     sped = 1;
     resetGame();
@@ -574,7 +725,7 @@ class _HomePageState extends State<HomePage>
       print(speed);
       for (int f = 0; f < 5; f++) {
         setState(() {
-          position[f] += speed[f] * (malus ? 2 : 1);
+          position[f] += speed[f] * (malusWatch.isRunning ? 2 : 1);
           if (!hi) {
             hi = true;
             houseimage = houseimg > 5
@@ -585,7 +736,7 @@ class _HomePageState extends State<HomePage>
           }
           if (bF == f) {
             if (bon >= 5) {
-              bPosition[f] += speed[f] * 2;
+              bPosition[f] += random.nextInt(3) + sped;
               bClock = bClock + 1 % 360;
               if (bPosition[f] >
                   (MediaQuery.of(context).size.height * 4 / 5) * 4 / 5 -
@@ -630,9 +781,10 @@ class _HomePageState extends State<HomePage>
             qT[f] += 1;
             if (f == 2) {
               setState(() {
-                malus = true;
-                Timer(Duration(seconds: 10), () {
-                  malus = false;
+                malusWatch.start();
+                Timer(Duration(seconds: malusD), () {
+                  malusWatch.stop();
+                  malusWatch.reset();
                 });
               });
             }
@@ -793,7 +945,9 @@ class _HomePageState extends State<HomePage>
                                         Positioned(
                                             top: bPosition[0],
                                             child: Bonusball(
-                                                text: bText[0], bonus: bClock)),
+                                                text: bText[0],
+                                                bonus: bType,
+                                                rot: bClock)),
                                       Positioned(
                                         top: position[0],
                                         child: Fireball(
@@ -820,7 +974,8 @@ class _HomePageState extends State<HomePage>
                                               top: bPosition[1],
                                               child: Bonusball(
                                                   text: bText[1],
-                                                  bonus: bClock)),
+                                                  bonus: bType,
+                                                  rot: bClock)),
                                         Positioned(
                                           top: position[1],
                                           child: !gameStarted
@@ -869,7 +1024,8 @@ class _HomePageState extends State<HomePage>
                                               top: bPosition[2],
                                               child: Bonusball(
                                                   text: bText[2],
-                                                  bonus: bClock)),
+                                                  bonus: bType,
+                                                  rot: bClock)),
                                         Positioned(
                                           top: position[2],
                                           child: !gameStarted
@@ -1007,7 +1163,8 @@ class _HomePageState extends State<HomePage>
                                               top: bPosition[3],
                                               child: Bonusball(
                                                   text: bText[3],
-                                                  bonus: bClock)),
+                                                  bonus: bType,
+                                                  rot: bClock)),
                                         Positioned(
                                           top: position[3],
                                           child: !gameStarted
@@ -1051,7 +1208,8 @@ class _HomePageState extends State<HomePage>
                                               top: bPosition[4],
                                               child: Bonusball(
                                                   text: bText[4],
-                                                  bonus: bClock)),
+                                                  bonus: bType,
+                                                  rot: bClock)),
                                         Positioned(
                                           top: position[4],
                                           child: Fireball(
@@ -1157,29 +1315,61 @@ class _HomePageState extends State<HomePage>
                             child: Row(
                               children: [
                                 AnimatedOpacity(
-                                    opacity: malus ? 1 : 0.5,
+                                    opacity: malusWatch.isRunning ? 1 : 0.5,
                                     duration: Duration(milliseconds: 200),
-                                    child: Image.asset(
-                                      "assets/images/faux.png",
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              20,
-                                      width:
-                                          MediaQuery.of(context).size.height /
-                                              20,
+                                    child: Center(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Image.asset(
+                                            "assets/images/faux.png",
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                20,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                20,
+                                          ),
+                                          if (malusWatch.isRunning)
+                                            Text(
+                                                '${5 - malusWatch.elapsed.inSeconds}',
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            42)),
+                                        ],
+                                      ),
                                     )),
                                 AnimatedOpacity(
-                                    opacity: bonus ? 1 : 0.5,
-                                    duration: Duration(milliseconds: 200),
-                                    child: Image.asset(
-                                      "assets/images/valide.png",
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              20,
-                                      width:
-                                          MediaQuery.of(context).size.height /
-                                              20,
-                                    )),
+                                  opacity: bonusWatch.isRunning ? 1 : 0.5,
+                                  duration: Duration(milliseconds: 200),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/valide.png",
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                20,
+                                        width:
+                                            MediaQuery.of(context).size.height /
+                                                20,
+                                      ),
+                                      if (bonusWatch.isRunning)
+                                        Text(
+                                            '${3 - bonusWatch.elapsed.inSeconds}',
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    42)),
+                                    ],
+                                  ),
+                                ),
                                 Expanded(
                                   child: Container(
                                     color: Color(0xFF3F51B5),
@@ -1462,10 +1652,12 @@ class _HomePageState extends State<HomePage>
                                           b = true;
                                           vrai = 1.0;
                                           bon += 1;
-                                          if (bon >= 5 && bF == 5) {
+                                          if (bon == 5 &&
+                                              !bonusWatch.isRunning) {
                                             bF = random.nextInt(5);
                                             bText[bF] = maths(modes[
                                                 random.nextInt(modes.length)]);
+                                            bType = random.nextInt(3);
                                           }
                                           Timer(Duration(milliseconds: 300),
                                               () {

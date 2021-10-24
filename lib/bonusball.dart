@@ -6,8 +6,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 class Bonusball extends StatelessWidget {
   final String text;
   final int bonus;
+  final int rot;
 
-  Bonusball({required this.text, required this.bonus});
+  Bonusball({required this.text, required this.bonus, required this.rot});
 
   @override
   Widget build(BuildContext context) {
@@ -26,24 +27,27 @@ class Bonusball extends StatelessWidget {
                 child: Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.rotationY(bonus * pi / 90),
-                  child: Image.asset("assets/images/horloge.png",
+                  child: Image.asset(
+                      bonus == 0
+                          ? "assets/images/horloge.png"
+                          : bonus == 1 ? "assets/images/water.png" : "assets/images/soins.png",
                       width: MediaQuery.of(context).size.width / 7),
                 ),
               ),
-              Center(
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(bonus * pi / 90),
-                  child: Center(
-                    child: Transform(
+              if (bonus == 0)
+                Center(
+                  child: Transform(
                       alignment: Alignment.center,
-                      transform: Matrix4.rotationZ(bonus * pi / 45),
-                      child: Image.asset("assets/images/aiguillage.png",
-                          width: MediaQuery.of(context).size.width / 7),
-                    ),
-                  )
-                ),
-              )
+                      transform: Matrix4.rotationY(bonus * pi / 90),
+                      child: Center(
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.rotationZ(bonus * pi / 45),
+                          child: Image.asset("assets/images/aiguillage.png",
+                              width: MediaQuery.of(context).size.width / 7),
+                        ),
+                      )),
+                )
             ]),
           ),
           Container(
