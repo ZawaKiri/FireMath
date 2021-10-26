@@ -19,7 +19,6 @@ version: 0.0.7+1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
@@ -30,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   auto_size_text: ^3.0.0-nullsafety.0
   shared_preferences: ^2.0.7
+  intro_slider: ^3.0.2
 
 dev_dependencies:
   flutter_test:

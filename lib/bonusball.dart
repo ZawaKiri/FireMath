@@ -26,23 +26,23 @@ class Bonusball extends StatelessWidget {
               Center(
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: Matrix4.rotationY(bonus * pi / 90),
+                  transform: Matrix4.rotationY(bonus == 4 ?  pi * rot : rot * pi / 90),
                   child: Image.asset(
-                      bonus == 0
+                      bonus < 4
                           ? "assets/images/horloge.png"
-                          : bonus == 1 ? "assets/images/water.png" : "assets/images/soins.png",
+                          : bonus < 5 ? "assets/images/water.png" : bonus < 7 ? "assets/images/soins.png" : "assets/images/recycle.png",
                       width: MediaQuery.of(context).size.width / 7),
                 ),
               ),
-              if (bonus == 0)
+              if (bonus < 4)
                 Center(
                   child: Transform(
                       alignment: Alignment.center,
-                      transform: Matrix4.rotationY(bonus * pi / 90),
+                      transform: Matrix4.rotationY(rot * pi / 90),
                       child: Center(
                         child: Transform(
                           alignment: Alignment.center,
-                          transform: Matrix4.rotationZ(bonus * pi / 45),
+                          transform: Matrix4.rotationZ(rot * pi / 45),
                           child: Image.asset("assets/images/aiguillage.png",
                               width: MediaQuery.of(context).size.width / 7),
                         ),

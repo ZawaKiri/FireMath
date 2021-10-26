@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     super.dispose();
     anim.dispose();
+    Navigator.pop(context);
   }
 
   late AnimationController anim;
@@ -143,6 +144,8 @@ class _HomePageState extends State<HomePage>
   var vDebloque = [1, 1, 1, 1, 1, 1];
   var game = 'Aventure';
   var games = ['Aventure', 'Infini', 'Vitesse'];
+  var cligno = false;
+  var c = 0;
 
   void resetGame() {
     anim.forward();
@@ -243,17 +246,19 @@ class _HomePageState extends State<HomePage>
             bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            if (bType == 0) {
+            if (bType < 4) {
               temp = [...speed];
-              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              for (int k = 0; k < 5; k++) speed[k] *= -2;
               bonusWatch.start();
+              bonusD = 2;
               Timer(Duration(seconds: bonusD), () {
                 speed = [...temp];
                 bonusWatch.stop();
                 bonusWatch.reset();
+                bonusD = 3;
                 bon = 0;
               });
-            } else if (bType == 1) {
+            } else if (bType < 5) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   position[f] = -(MediaQuery.of(context).size.width / 7) *
@@ -273,10 +278,16 @@ class _HomePageState extends State<HomePage>
                               : false;
                 });
               }
-            } else if (bType == 2) {
+            } else if (bType < 7) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   if (qT[f] > 0) qT[f] -= 1;
+                });
+              }
+            } else if (bType < 8) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {
+
                 });
               }
             }
@@ -722,7 +733,8 @@ class _HomePageState extends State<HomePage>
     }
 
     _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
-      print(speed);
+      c = (c + 1) % 20;
+      if (c == 0) cligno = !cligno;
       for (int f = 0; f < 5; f++) {
         setState(() {
           position[f] += speed[f] * (malusWatch.isRunning ? 2 : 1);
@@ -756,6 +768,7 @@ class _HomePageState extends State<HomePage>
                       (1 + 704 / 526);
               bText[f] = '';
               bF = 5;
+              bon = 0;
             }
           }
         });
@@ -951,7 +964,7 @@ class _HomePageState extends State<HomePage>
                                       Positioned(
                                         top: position[0],
                                         child: Fireball(
-                                            text: texte[0],
+                                            text: cligno ? texte[0] : "",
                                             mortel: mortel[0],
                                             fireimg: houseimg > 5),
                                       )
@@ -997,12 +1010,12 @@ class _HomePageState extends State<HomePage>
                                                   child: Fireball(
                                                       text: texte[1],
                                                       mortel: mortel[1],
-                                                      fireimg: houseimg > 5),
+                                                      fireimg: houseimg < 5),
                                                 )
                                               : Fireball(
                                                   text: texte[1],
                                                   mortel: mortel[1],
-                                                  fireimg: houseimg > 5),
+                                                  fireimg: houseimg < 5),
                                         )
                                       ]),
                                 ),
@@ -1181,12 +1194,12 @@ class _HomePageState extends State<HomePage>
                                                   child: Fireball(
                                                       text: texte[3],
                                                       mortel: mortel[3],
-                                                      fireimg: houseimg > 5),
+                                                      fireimg: houseimg < 5),
                                                 )
                                               : Fireball(
                                                   text: texte[3],
                                                   mortel: mortel[3],
-                                                  fireimg: houseimg > 5),
+                                                  fireimg: houseimg < 5),
                                         )
                                       ]),
                                 ),
@@ -1334,7 +1347,7 @@ class _HomePageState extends State<HomePage>
                                           ),
                                           if (malusWatch.isRunning)
                                             Text(
-                                                '${5 - malusWatch.elapsed.inSeconds}',
+                                                '${malusD - malusWatch.elapsed.inSeconds}',
                                                 style: TextStyle(
                                                     fontSize:
                                                         MediaQuery.of(context)
@@ -1361,7 +1374,7 @@ class _HomePageState extends State<HomePage>
                                       ),
                                       if (bonusWatch.isRunning)
                                         Text(
-                                            '${3 - bonusWatch.elapsed.inSeconds}',
+                                            '${bonusD - bonusWatch.elapsed.inSeconds}',
                                             style: TextStyle(
                                                 fontSize: MediaQuery.of(context)
                                                         .size
@@ -1657,7 +1670,7 @@ class _HomePageState extends State<HomePage>
                                             bF = random.nextInt(5);
                                             bText[bF] = maths(modes[
                                                 random.nextInt(modes.length)]);
-                                            bType = random.nextInt(3);
+                                            bType = 4;//random.nextInt(7);
                                           }
                                           Timer(Duration(milliseconds: 300),
                                               () {
