@@ -109,9 +109,9 @@ class _HomePageState extends State<HomePage>
   Timer _timer = Timer(Duration(milliseconds: 0), () {});
   var faux = 0.5;
   var vrai = 0.5;
-  var bon = 0;
+  var bon = false;
   bool b = false;
-  var mortel = [false, false, false, false, false];
+  var mortel = [0, 0, 0, 0, 0];
   var sped = 1;
   var closed = false;
   var houseimg = 0;
@@ -223,9 +223,9 @@ class _HomePageState extends State<HomePage>
       _timer = Timer(Duration(milliseconds: 0), () {});
       faux = 0.5;
       vrai = 0.5;
-      bon = 0;
+      bon = false;
       b = false;
-      mortel = [false, false, false, false, false];
+      mortel = [0, 0, 0, 0, 0];
       malusWatch.stop();
       malusWatch.reset();
       bonusWatch.stop();
@@ -243,7 +243,6 @@ class _HomePageState extends State<HomePage>
         if ((n == int.parse(s.split("+")[0]) + int.parse(s.split("+")[1])) &&
             !bonusWatch.isRunning) {
           setState(() {
-            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
             if (bType < 4) {
@@ -256,7 +255,7 @@ class _HomePageState extends State<HomePage>
                 bonusWatch.stop();
                 bonusWatch.reset();
                 bonusD = 3;
-                bon = 0;
+                bon = false;
               });
             } else if (bType < 5) {
               for (int f = 0; f < 5; f++) {
@@ -270,12 +269,14 @@ class _HomePageState extends State<HomePage>
                   speed[f] = (random.nextInt(3) + sped) / 2;
                   texte[f] = maths(modes[random.nextInt(modes.length)]);
                   mortel[f] = f == 2
-                      ? false
+                      ? 0
                       : qT[f] == 2
-                          ? true
-                          : random.nextInt(5) == 0
-                              ? true
-                              : false;
+                          ? 1
+                          : random.nextInt(10) == 0
+                              ? 1
+                              : random.nextInt(5) == 0
+                                  ? random.nextInt(2) + 2
+                                  : 0;
                 });
               }
             } else if (bType < 7) {
@@ -286,9 +287,7 @@ class _HomePageState extends State<HomePage>
               }
             } else if (bType < 8) {
               for (int f = 0; f < 5; f++) {
-                setState(() {
-
-                });
+                setState(() {});
               }
             }
           });
@@ -298,20 +297,21 @@ class _HomePageState extends State<HomePage>
         if ((n == int.parse(s.split("-")[0]) + int.parse(s.split("-")[1])) &&
             !bonusWatch.isRunning) {
           setState(() {
-            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            if (bType == 0) {
+            if (bType < 4) {
               temp = [...speed];
-              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              for (int k = 0; k < 5; k++) speed[k] *= -2;
               bonusWatch.start();
+              bonusD = 2;
               Timer(Duration(seconds: bonusD), () {
                 speed = [...temp];
                 bonusWatch.stop();
                 bonusWatch.reset();
-                bon = 0;
+                bonusD = 3;
+                bon = false;
               });
-            } else if (bType == 1) {
+            } else if (bType < 5) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   position[f] = -(MediaQuery.of(context).size.width / 7) *
@@ -323,19 +323,25 @@ class _HomePageState extends State<HomePage>
                   speed[f] = (random.nextInt(3) + sped) / 2;
                   texte[f] = maths(modes[random.nextInt(modes.length)]);
                   mortel[f] = f == 2
-                      ? false
+                      ? 0
                       : qT[f] == 2
-                          ? true
-                          : random.nextInt(5) == 0
-                              ? true
-                              : false;
+                          ? 1
+                          : random.nextInt(10) == 0
+                              ? 1
+                              : random.nextInt(5) == 0
+                                  ? random.nextInt(2) + 2
+                                  : 0;
                 });
               }
-            } else if (bType == 2) {
+            } else if (bType < 7) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   if (qT[f] > 0) qT[f] -= 1;
                 });
+              }
+            } else if (bType < 8) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {});
               }
             }
           });
@@ -345,20 +351,21 @@ class _HomePageState extends State<HomePage>
         if ((n == int.parse(s.split("*")[0]) + int.parse(s.split("*")[1])) &&
             !bonusWatch.isRunning) {
           setState(() {
-            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            if (bType == 0) {
+            if (bType < 4) {
               temp = [...speed];
-              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              for (int k = 0; k < 5; k++) speed[k] *= -2;
               bonusWatch.start();
+              bonusD = 2;
               Timer(Duration(seconds: bonusD), () {
                 speed = [...temp];
                 bonusWatch.stop();
                 bonusWatch.reset();
-                bon = 0;
+                bonusD = 3;
+                bon = false;
               });
-            } else if (bType == 1) {
+            } else if (bType < 5) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   position[f] = -(MediaQuery.of(context).size.width / 7) *
@@ -370,19 +377,25 @@ class _HomePageState extends State<HomePage>
                   speed[f] = (random.nextInt(3) + sped) / 2;
                   texte[f] = maths(modes[random.nextInt(modes.length)]);
                   mortel[f] = f == 2
-                      ? false
+                      ? 0
                       : qT[f] == 2
-                          ? true
-                          : random.nextInt(5) == 0
-                              ? true
-                              : false;
+                          ? 1
+                          : random.nextInt(10) == 0
+                              ? 1
+                              : random.nextInt(5) == 0
+                                  ? random.nextInt(2) + 2
+                                  : 0;
                 });
               }
-            } else if (bType == 2) {
+            } else if (bType < 7) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   if (qT[f] > 0) qT[f] -= 1;
                 });
+              }
+            } else if (bType < 8) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {});
               }
             }
           });
@@ -392,20 +405,21 @@ class _HomePageState extends State<HomePage>
         if ((n == int.parse(s.split("/")[0]) + int.parse(s.split("/")[1])) &&
             !bonusWatch.isRunning) {
           setState(() {
-            bon = 0;
             bPosition[c] =
                 -(MediaQuery.of(context).size.width / 7) * (1 + 704 / 526);
-            if (bType == 0) {
+            if (bType < 4) {
               temp = [...speed];
-              speed = [0.0, 0.0, 0.0, 0.0, 0.0];
+              for (int k = 0; k < 5; k++) speed[k] *= -2;
               bonusWatch.start();
+              bonusD = 2;
               Timer(Duration(seconds: bonusD), () {
                 speed = [...temp];
                 bonusWatch.stop();
                 bonusWatch.reset();
-                bon = 0;
+                bonusD = 3;
+                bon = false;
               });
-            } else if (bType == 1) {
+            } else if (bType < 5) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   position[f] = -(MediaQuery.of(context).size.width / 7) *
@@ -417,19 +431,25 @@ class _HomePageState extends State<HomePage>
                   speed[f] = (random.nextInt(3) + sped) / 2;
                   texte[f] = maths(modes[random.nextInt(modes.length)]);
                   mortel[f] = f == 2
-                      ? false
+                      ? 0
                       : qT[f] == 2
-                          ? true
-                          : random.nextInt(5) == 0
-                              ? true
-                              : false;
+                          ? 1
+                          : random.nextInt(10) == 0
+                              ? 1
+                              : random.nextInt(5) == 0
+                                  ? random.nextInt(2) + 2
+                                  : 0;
                 });
               }
-            } else if (bType == 2) {
+            } else if (bType < 7) {
               for (int f = 0; f < 5; f++) {
                 setState(() {
                   if (qT[f] > 0) qT[f] -= 1;
                 });
+              }
+            } else if (bType < 8) {
+              for (int f = 0; f < 5; f++) {
+                setState(() {});
               }
             }
           });
@@ -455,12 +475,14 @@ class _HomePageState extends State<HomePage>
             speed[c] = (random.nextInt(3) + sped) / 2;
             texte[c] = maths(modes[random.nextInt(modes.length)]);
             mortel[c] = c == 2
-                ? false
+                ? 0
                 : qT[c] == 2
-                    ? true
-                    : random.nextInt(5) == 0
-                        ? true
-                        : false;
+                    ? 1
+                    : random.nextInt(10) == 0
+                        ? 1
+                        : random.nextInt(5) == 0
+                            ? random.nextInt(2) + 2
+                            : 0;
             a = 1;
           });
         }
@@ -477,12 +499,14 @@ class _HomePageState extends State<HomePage>
             speed[c] = (random.nextInt(3) + sped) / 2;
             texte[c] = maths(modes[random.nextInt(modes.length)]);
             mortel[c] = c == 2
-                ? false
+                ? 0
                 : qT[c] == 2
-                    ? true
-                    : random.nextInt(5) == 0
-                        ? true
-                        : false;
+                    ? 1
+                    : random.nextInt(10) == 0
+                        ? 1
+                        : random.nextInt(5) == 0
+                            ? random.nextInt(2) + 2
+                            : 0;
             a = 1;
           });
         }
@@ -499,12 +523,14 @@ class _HomePageState extends State<HomePage>
             speed[c] = (random.nextInt(3) + sped) / 2;
             texte[c] = maths(modes[random.nextInt(modes.length)]);
             mortel[c] = c == 2
-                ? false
+                ? 0
                 : qT[c] == 2
-                    ? true
-                    : random.nextInt(5) == 0
-                        ? true
-                        : false;
+                    ? 1
+                    : random.nextInt(10) == 0
+                        ? 1
+                        : random.nextInt(5) == 0
+                            ? random.nextInt(2) + 2
+                            : 0;
             a = 1;
           });
         }
@@ -521,12 +547,14 @@ class _HomePageState extends State<HomePage>
             speed[c] = (random.nextInt(3) + sped) / 2;
             texte[c] = maths(modes[random.nextInt(modes.length)]);
             mortel[c] = c == 2
-                ? false
+                ? 0
                 : qT[c] == 2
-                    ? true
-                    : random.nextInt(5) == 0
-                        ? true
-                        : false;
+                    ? 1
+                    : random.nextInt(10) == 0
+                        ? 1
+                        : random.nextInt(5) == 0
+                            ? random.nextInt(2) + 2
+                            : 0;
             a = 1;
           });
         }
@@ -733,6 +761,7 @@ class _HomePageState extends State<HomePage>
     }
 
     _timer = Timer.periodic(Duration(milliseconds: 50), (timer) {
+      print(mortel);
       c = (c + 1) % 20;
       if (c == 0) cligno = !cligno;
       for (int f = 0; f < 5; f++) {
@@ -747,7 +776,7 @@ class _HomePageState extends State<HomePage>
             if (houseimg == 10) houseimg = 0;
           }
           if (bF == f) {
-            if (bon >= 5) {
+            if (bon && !bonusWatch.isRunning) {
               bPosition[f] += random.nextInt(3) + sped;
               bClock = bClock + 1 % 360;
               if (bPosition[f] >
@@ -756,9 +785,7 @@ class _HomePageState extends State<HomePage>
                       (MediaQuery.of(context).size.height * 16 / 25) *
                           score /
                           50 -
-                      (MediaQuery.of(context).size.width / 7) * (704 / 526)) {
-                bon = 0;
-              }
+                      (MediaQuery.of(context).size.width / 7) * (704 / 526)) {}
             } else {
               bPosition[f] =
                   -(MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
@@ -768,7 +795,6 @@ class _HomePageState extends State<HomePage>
                       (1 + 704 / 526);
               bText[f] = '';
               bF = 5;
-              bon = 0;
             }
           }
         });
@@ -788,11 +814,11 @@ class _HomePageState extends State<HomePage>
                 MediaQuery.of(context).size.height / 18 -
                 (MediaQuery.of(context).size.height * 16 / 25) * score / 50 -
                 (MediaQuery.of(context).size.width / 7) * (704 / 526)) {
-          if (mortel[f] == true || (f == 2 && qT[f] == 1))
+          if (mortel[f] == 1 || (f == 2 && qT[f] == 1))
             lost(f);
           else {
             qT[f] += 1;
-            if (f == 2) {
+            if (f == 2 || mortel[f] == 3) {
               setState(() {
                 malusWatch.start();
                 Timer(Duration(seconds: malusD), () {
@@ -800,6 +826,17 @@ class _HomePageState extends State<HomePage>
                   malusWatch.reset();
                 });
               });
+            } else if (mortel[f] == 2) {
+              if (!malusWatch.isRunning) {
+                print('letzego');
+                setState(() {
+                  for (int k = 1; k <= malusD; k++) {
+                    Timer(Duration(milliseconds: k * malusD * 400), () {
+                      texte.shuffle();
+                    });
+                  }
+                });
+              }
             }
             position[f] = -(MediaQuery.of(context).size.width / 7) *
                     (1 + 704 / 526) -
@@ -808,13 +845,15 @@ class _HomePageState extends State<HomePage>
                         .toInt());
             speed[f] = (random.nextInt(3) + sped) / 2;
             texte[f] = maths(modes[random.nextInt(modes.length)]);
-            mortel[f] = f == 2
-                ? false
-                : qT[f] == 2
-                    ? true
-                    : random.nextInt(5) == 0
-                        ? true
-                        : false;
+            mortel[c] = c == 2
+                ? 0
+                : qT[c] == 2
+                    ? 1
+                    : random.nextInt(10) == 0
+                        ? 1
+                        : random.nextInt(5) == 0
+                            ? random.nextInt(2) + 2
+                            : 0;
           }
         }
       }
@@ -954,7 +993,7 @@ class _HomePageState extends State<HomePage>
                                 child: Stack(
                                     alignment: Alignment.topCenter,
                                     children: [
-                                      if (bF == 0 && bon >= 5)
+                                      if (bF == 0 && bon)
                                         Positioned(
                                             top: bPosition[0],
                                             child: Bonusball(
@@ -982,7 +1021,7 @@ class _HomePageState extends State<HomePage>
                                   child: Stack(
                                       alignment: Alignment.topCenter,
                                       children: [
-                                        if (bF == 1 && bon >= 5)
+                                        if (bF == 1 && bon)
                                           Positioned(
                                               top: bPosition[1],
                                               child: Bonusball(
@@ -1032,7 +1071,7 @@ class _HomePageState extends State<HomePage>
                                   child: Stack(
                                       alignment: Alignment.topCenter,
                                       children: [
-                                        if (bF == 2 && bon >= 5)
+                                        if (bF == 2 && bon)
                                           Positioned(
                                               top: bPosition[2],
                                               child: Bonusball(
@@ -1171,7 +1210,7 @@ class _HomePageState extends State<HomePage>
                                   child: Stack(
                                       alignment: Alignment.topCenter,
                                       children: [
-                                        if (bF == 3 && bon >= 5)
+                                        if (bF == 3 && bon)
                                           Positioned(
                                               top: bPosition[3],
                                               child: Bonusball(
@@ -1216,7 +1255,7 @@ class _HomePageState extends State<HomePage>
                                   child: Stack(
                                       alignment: Alignment.topCenter,
                                       children: [
-                                        if (bF == 4 && bon >= 5)
+                                        if (bF == 4 && bon)
                                           Positioned(
                                               top: bPosition[4],
                                               child: Bonusball(
@@ -1657,20 +1696,21 @@ class _HomePageState extends State<HomePage>
                                   setState(() {
                                     if (gameStarted == true) {
                                       b = false;
-                                      if (bon >= 5)
+                                      if (bon)
                                         bTryNumber(number, bText[bF], bF);
                                       for (int f = 0; f < 5; f++)
                                         if (tryNumber(number, texte[f], f) ==
                                             true) {
                                           b = true;
                                           vrai = 1.0;
-                                          bon += 1;
-                                          if (bon == 5 &&
-                                              !bonusWatch.isRunning) {
-                                            bF = random.nextInt(5);
-                                            bText[bF] = maths(modes[
-                                                random.nextInt(modes.length)]);
-                                            bType = 4;//random.nextInt(7);
+                                          if (!bon) {
+                                            bon = random.nextInt(5) == 0;
+                                            if (bon) {
+                                              bF = random.nextInt(5);
+                                              bText[bF] = maths(modes[random
+                                                  .nextInt(modes.length)]);
+                                              bType = random.nextInt(7);
+                                            }
                                           }
                                           Timer(Duration(milliseconds: 300),
                                               () {
@@ -1681,7 +1721,7 @@ class _HomePageState extends State<HomePage>
                                         faux = 1.0;
                                         Timer(Duration(milliseconds: 300), () {
                                           faux = 0.5;
-                                          bon = 0;
+                                          bon = false;
                                         });
                                       }
                                       number = 0;

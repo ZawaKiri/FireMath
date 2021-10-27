@@ -5,7 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 
 class Fireball extends StatelessWidget {
   final String text;
-  final bool mortel;
+  final int mortel;
   final bool fireimg;
 
   Fireball({required this.text, required this.mortel, required this.fireimg});
@@ -20,8 +20,8 @@ class Fireball extends StatelessWidget {
           child: Column(
         children: [
             Transform(alignment: Alignment.center, transform: Matrix4.rotationY(fireimg ? pi : 0),
-            child: Image.asset(mortel ?
-              "assets/images/bluefire.png" : "assets/images/fire.png",
+            child: Image.asset(mortel == 1 ?
+              "assets/images/bluefire.png" : mortel == 0 ? "assets/images/fire.png" : mortel == 2 ? "assets/images/firerecycle.png" : "assets/images/img.png",
               width: MediaQuery.of(context).size.width / 7,
               //color: Color(0x22DB222A),
             ),

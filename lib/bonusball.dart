@@ -26,7 +26,7 @@ class Bonusball extends StatelessWidget {
               Center(
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: Matrix4.rotationY(bonus == 4 ?  pi * rot : rot * pi / 90),
+                  transform: Matrix4.rotationY(bonus == 4 ?  pi * (rot % 20 < 10 ? 1 : 2) : rot * pi / 90),
                   child: Image.asset(
                       bonus < 4
                           ? "assets/images/horloge.png"
